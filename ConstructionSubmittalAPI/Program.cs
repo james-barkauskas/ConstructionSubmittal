@@ -1,4 +1,6 @@
 using ConstructionSubmittal_API.Data;
+using ConstructionSubmittal_API.Models;
+using ConstructionSubmittal_API.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -9,6 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddAutoMapper(o=>
+{
+    o.CreateMap<Project, ProjectCreateDTO>().ReverseMap();
+    o.CreateMap<Project, ProjectUpdateDTO>().ReverseMap();
+});
 
 // configure dbcontext
 builder.Services.AddDbContext<AppDbContext>(options =>
