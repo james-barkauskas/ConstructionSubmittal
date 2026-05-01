@@ -1,6 +1,8 @@
 using ConstructionSubmittal_API.Data;
 using ConstructionSubmittal_API.Models;
 using ConstructionSubmittal_API.Models.DTOs;
+using ConstructionSubmittal_API.Services;
+using ConstructionSubmittal_API.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -15,6 +17,7 @@ builder.Services.AddAutoMapper(o=>
 {
     o.CreateMap<Project, ProjectCreateDTO>().ReverseMap();
     o.CreateMap<Project, ProjectUpdateDTO>().ReverseMap();
+    o.CreateMap<Project, ProjectReadDTO>().ReverseMap();
 });
 
 // configure dbcontext
@@ -22,6 +25,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 
 var app = builder.Build();
