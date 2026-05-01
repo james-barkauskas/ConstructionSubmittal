@@ -2,6 +2,7 @@
 using ConstructionSubmittal_API.Data;
 using ConstructionSubmittal_API.Models;
 using ConstructionSubmittal_API.Models.DTOs;
+using ConstructionSubmittal_API.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +14,13 @@ namespace ConstructionSubmittal_API.Controllers
     public class ProjectsController : ControllerBase
     {
         // private, class-level variables that we can use throughout the controller, each method can access the '_db'..
+        private readonly IProjectService _projectService;
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
-        public ProjectsController(AppDbContext db, IMapper mapper)  // our constructor gets 'db' injected.. so we assign our private _db to the injected db..
+        public ProjectsController(AppDbContext db, IMapper mapper, IProjectService projectService)  // our constructor gets 'db' injected.. so we assign our private _db to the injected db..
         {
             _db = db;
+            _projectService = projectService;
             _mapper = mapper;
         }
         
@@ -46,7 +49,7 @@ namespace ConstructionSubmittal_API.Controllers
         }
 
         [HttpPost]  // how does this post method get the projectDTO from the method param?
-        public async Task<ActionResult<Project>> CreateProject(ProjectCreateDTO projectDTO)
+        public async Task<ActionResult<Project>> CreateProject([FromBody] ProjectCreateDTO projectDTO)
         {
             if (projectDTO == null)
             {
@@ -59,12 +62,24 @@ namespace ConstructionSubmittal_API.Controllers
             //    ProjectNumber = projectDTO.ProjectNumber,
             //    Address = projectDTO.Address
             //};
+
+            //Project project = _mapper.Map<Project>(projectDTO);
+
+            //await _db.AddAsync(project);
+            //await _db.SaveChangesAsync();
+
             Project project = _mapper.Map<Project>(projectDTO);
 
-            await _db.AddAsync(project);
-            await _db.SaveChangesAsync();
+            var createdProject = await _projectService.CreateProjectAsync(project);
+            if (createdProject == null)
+            {
+                return Conflict("A project with that job number already exists.");
+            }
 
-            return Ok(project);
+            var returnedProject = _mapper.Map<ProjectReadDTO>(createdProject);
+
+            return CreatedAtAction(nameof(GetProjectById), new { id = returnedProject.Id }, returnedProject);
+            // return Ok(returnedProject);
         }
 
         [HttpPut("{id:int}")]
