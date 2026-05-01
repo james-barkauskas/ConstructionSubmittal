@@ -26,21 +26,21 @@ namespace ConstructionSubmittal_API.Data
                 {
                     Id = 1,
                     Name = "Lockport High School",
-                    ProjectNumber = "001",
+                    JobNumber = "001",
                     Address = "123 Lockport Road"
                 },
                 new Project
                 {
                     Id = 2,
                     Name = "Lockport Animal Hospital",
-                    ProjectNumber = "002",
+                    JobNumber = "002",
                     Address = "520 Main Street"
                 },
                 new Project
                 {
                     Id = 3,
                     Name = "Wendys",
-                    ProjectNumber = "003",
+                    JobNumber = "003",
                     Address = "101 Center Drive"
                 }
                 );

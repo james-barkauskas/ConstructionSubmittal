@@ -8,13 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConstructionSubmittal_API.Controllers
 {
-    [Route("api/projects")]
+    [Route("api/projects")] // this is the url to this controller.. 'localhost/api/projects' this is how requests hit our endpoints
     [ApiController]
     public class ProjectsController : ControllerBase
     {
+        // private, class-level variables that we can use throughout the controller, each method can access the '_db'..
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
-        public ProjectsController(AppDbContext db, IMapper mapper)
+        public ProjectsController(AppDbContext db, IMapper mapper)  // our constructor gets 'db' injected.. so we assign our private _db to the injected db..
         {
             _db = db;
             _mapper = mapper;
@@ -26,7 +27,7 @@ namespace ConstructionSubmittal_API.Controllers
             return Ok(await _db.Projects.ToListAsync());
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}")]   // how does the 'id' route param relate to the 'id' method param?
         public async Task<ActionResult<Project>> GetProjectById(int id)
         {
             if (id <= 0)
@@ -44,7 +45,7 @@ namespace ConstructionSubmittal_API.Controllers
             return Ok(project);
         }
 
-        [HttpPost]
+        [HttpPost]  // how does this post method get the projectDTO from the method param?
         public async Task<ActionResult<Project>> CreateProject(ProjectCreateDTO projectDTO)
         {
             if (projectDTO == null)

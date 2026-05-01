@@ -3,6 +3,7 @@ using ConstructionSubmittal_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConstructionSubmittal_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260501045516_ChangeProjectPropertiesToRequired")]
+    partial class ChangeProjectPropertiesToRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,11 +36,11 @@ namespace ConstructionSubmittal_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("JobNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProjectNumber")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -50,22 +53,22 @@ namespace ConstructionSubmittal_API.Migrations
                         {
                             Id = 1,
                             Address = "123 Lockport Road",
-                            Name = "Lockport High School",
-                            ProjectNumber = "001"
+                            JobNumber = "001",
+                            Name = "Lockport High School"
                         },
                         new
                         {
                             Id = 2,
                             Address = "520 Main Street",
-                            Name = "Lockport Animal Hospital",
-                            ProjectNumber = "002"
+                            JobNumber = "002",
+                            Name = "Lockport Animal Hospital"
                         },
                         new
                         {
                             Id = 3,
                             Address = "101 Center Drive",
-                            Name = "Wendys",
-                            ProjectNumber = "003"
+                            JobNumber = "003",
+                            Name = "Wendys"
                         });
                 });
 #pragma warning restore 612, 618
