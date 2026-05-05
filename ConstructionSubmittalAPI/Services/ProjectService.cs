@@ -15,6 +15,7 @@ namespace ConstructionSubmittal_API.Services
 
         public async Task<Project?> CreateProjectAsync(Project project)
         {
+            // using anyAsync is good for checking for existence.. if use FirstOrDefault, it returns the obj, which is heavier db query.. and don't always need an obj if just checking for existence..
             var exists = await _db.Projects.AnyAsync(u => u.JobNumber == project.JobNumber);
             if (exists) { return null; }
 
@@ -22,6 +23,11 @@ namespace ConstructionSubmittal_API.Services
             await _db.SaveChangesAsync();
 
             return project;
+
+            // what checks to put in services vs controllers?
+            // generally - controller checks validation, should not touch db..
+            // - services check if data is valid within context of your business logic.. does this ProjectNum alerady exist? does this CompanyId the user provided exist?
+
 
             //var projectFromDb = _db.Projects.FirstOrDefault(u => u.JobNumber == project.JobNumber);
             //if (projectFromDb==null)

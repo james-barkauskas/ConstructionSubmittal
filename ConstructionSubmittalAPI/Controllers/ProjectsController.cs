@@ -30,7 +30,7 @@ namespace ConstructionSubmittal_API.Controllers
             return Ok(await _db.Projects.ToListAsync());
         }
 
-        [HttpGet("{id:int}")]   // how does the 'id' route param relate to the 'id' method param?
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Project>> GetProjectById(int id)
         {
             if (id <= 0)
@@ -68,9 +68,10 @@ namespace ConstructionSubmittal_API.Controllers
             //await _db.AddAsync(project);
             //await _db.SaveChangesAsync();
 
+            // in n-tier, controller should handle the mapping from entity-dto.. but just never return entity model to user..
             Project project = _mapper.Map<Project>(projectDTO);
 
-            var createdProject = await _projectService.CreateProjectAsync(project);
+            var createdProject = await _projectService.CreateProjectAsync(project); // should i instead be passing a DTO to the service? that way the Controller doesn't see the Db entity..
             if (createdProject == null)
             {
                 return Conflict("A project with that job number already exists.");
@@ -78,7 +79,8 @@ namespace ConstructionSubmittal_API.Controllers
 
             var returnedProject = _mapper.Map<ProjectReadDTO>(createdProject);
 
-            return CreatedAtAction(nameof(GetProjectById), new { id = returnedProject.Id }, returnedProject);
+            // controller should always return a dto.. never an entity model.
+            return CreatedAtAction(nameof(GetProjectById), new { id = returnedProject.Id }, returnedProject);   // best practice to return CreatedAtAction for Create method.. use OK for a get or update.. createdAtAction includes a location header..
             // return Ok(returnedProject);
         }
 

@@ -2,7 +2,7 @@
 
 namespace ConstructionSubmittal_API.Models.DTOs
 {
-    public class ProjectUpdateDTO
+    public class ProjectUpdateDTO   // often identical or very similar to CreateDTO.. with the Id though..
     {
         public int Id { get; set; }
         [Required]
