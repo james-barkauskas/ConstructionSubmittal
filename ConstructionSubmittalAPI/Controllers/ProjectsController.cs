@@ -25,27 +25,36 @@ namespace ConstructionSubmittal_API.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+        public async Task<ActionResult<IEnumerable<ProjectReadDTO>>> GetProjects()
         {
-            return Ok(await _db.Projects.ToListAsync());
+            var projects = await _projectService.GetAllProjectsAsync();   // retrieve the list of Projects so can map them to DTOs
+            var projectsToReturn = _mapper.Map<IEnumerable<ProjectReadDTO>>(projects);
+            return Ok(projectsToReturn);
+            //return Ok(await _projectService.GetAllProjectsAsync());
         }
 
+        
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Project>> GetProjectById(int id)
+        public async Task<ActionResult<ProjectReadDTO>> GetProjectById(int id)
         {
-            if (id <= 0)
-            {
-                return BadRequest("Invalid id");
-            }
+            if (id <= 0) { return BadRequest("Invalid Id"); }   // instead of checking this, can use a routeConstraint: HttpGet("{id:int:min(1)}")
 
-            var project = await _db.Projects.FirstOrDefaultAsync(u => u.Id == id);
+            var project = await _projectService.GetProjectByIdAsync(id);
+            if (project == null) { return NotFound($"Project with id {id} does not exist."); }
+            return Ok(_mapper.Map<ProjectReadDTO>(project));
+            //if (id <= 0)
+            //{
+            //    return BadRequest("Invalid id");
+            //}
 
-            if (project == null)
-            {
-                return NotFound($"Project with id {id} does not exist.");
-            }
+            //var project = await _db.Projects.FirstOrDefaultAsync(u => u.Id == id);
 
-            return Ok(project);
+            //if (project == null)
+            //{
+            //    return NotFound($"Project with id {id} does not exist.");
+            //}
+
+            //return Ok(project);
         }
 
         [HttpPost]  // how does this post method get the projectDTO from the method param?
