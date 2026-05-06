@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConstructionSubmittal_API.Services
 {
+    // services only know about database and C#... don't know the 'internet' and status codes, etc...
     public class ProjectService : IProjectService
     {
         private readonly AppDbContext _db;
@@ -47,12 +48,25 @@ namespace ConstructionSubmittal_API.Services
 
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
-            throw new NotImplementedException();
+            //var projects = await _db.Projects.ToListAsync();
+            //return projects;
+            return await _db.Projects.ToListAsync();    // can make this one line.. don't need to declare 'projects' varible to return it..
         }
 
         public async Task<Project?> GetProjectByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            // can also make one line.. if obj doesn't exist by the id, it will return null anyway.. since all i'm doing is retrieving the obj and not doing anything with it.. just one line works
+            return await _db.Projects.FindAsync(id);    // using Find is better/quicker than FirstOrDefault.. use Find when looking something up by Id..
+            //var project = await _db.Projects.FirstOrDefaultAsync(u => u.Id == id);
+            //if (project == null)
+            //{
+            //    return null;
+            //}
+            //else
+            //{
+            //    return project;
+            //}
+            
         }
 
         public async Task<Project?> UpdateProjectAsync(int id, Project project)
