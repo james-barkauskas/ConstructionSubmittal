@@ -15,6 +15,7 @@ namespace ConstructionSubmittal_API.Data
     public class AppDbContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<Project> Projects { get; set; }
+        public DbSet<Submittal> Submittals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

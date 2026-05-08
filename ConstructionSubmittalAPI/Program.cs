@@ -19,6 +19,10 @@ builder.Services.AddAutoMapper(o=>
     o.CreateMap<Project, ProjectUpdateDTO>().ReverseMap().ForMember(dest => dest.Id, opt => opt.Ignore());  // tells ef core 'ignore id from the source obj'.. so don't map to the destination id
     o.CreateMap<Project, ProjectReadDTO>().ReverseMap();
     o.CreateMap<Project, Project>().ReverseMap().ForMember(dest => dest.Id, opt => opt.Ignore());   // include for mapping in service Update method..
+
+    o.CreateMap<Submittal, SubmittalReadDTO>().ReverseMap();
+    o.CreateMap<SubmittalCreateDTO, Submittal>();   // should avoid mapping in both directions for create and update..
+    o.CreateMap<SubmittalUpdateDTO, Submittal>();
 });
 
 // configure dbcontext

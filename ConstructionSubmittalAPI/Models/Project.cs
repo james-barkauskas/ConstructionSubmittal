@@ -21,5 +21,8 @@ namespace ConstructionSubmittal_API.Models
         // if you wanted to allow users to create a 'draft' project (no Name at creation), could leave off [Required].. but keep string.Empty.. b/c this would say the reqeust doesn't need Name..
         // by including [Required] on DTO and Entity model, it tells DTO what to accept, it tells Db that the property is NOT NULL
         // if you only put [Required] on DTO and not Db model, SQL would mark the Db Column as nullable..
+
+        // Inverse Nav property.. with any Project, can see it's submittalls..
+        // public List<Submittal> Submittals { get; set; } = new();    // wouldn't include in my DTOs..
     }
 }

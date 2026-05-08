@@ -71,7 +71,7 @@ namespace ConstructionSubmittal_API.Controllers
         public async Task<ActionResult<ProjectReadDTO>> UpdateProject([FromRoute]int id, [FromBody]ProjectUpdateDTO projectDTO)
         {
             if (projectDTO == null) { return BadRequest("Project cannot be null"); }
-            if (id != projectDTO.Id) { return BadRequest("Id does not match project id."); }
+            if (id != projectDTO.Id) { return BadRequest("Id does not match project id."); }    // this is more a 'legacy' pattern? maybe remove the Id property from updateDTO.. for better security..?
 
             var project = await _projectService.UpdateProjectAsync(id, _mapper.Map<Project>(projectDTO));
             if (project == null) { return NotFound(); }
