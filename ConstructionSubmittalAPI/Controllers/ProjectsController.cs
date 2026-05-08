@@ -35,26 +35,13 @@ namespace ConstructionSubmittal_API.Controllers
 
         
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ProjectReadDTO>> GetProjectById(int id)
+        public async Task<ActionResult<ProjectReadDTO>> GetProjectById([FromRoute] int id)
         {
             if (id <= 0) { return BadRequest("Invalid Id"); }   // instead of checking this, can use a routeConstraint: HttpGet("{id:int:min(1)}")
 
             var project = await _projectService.GetProjectByIdAsync(id);
             if (project == null) { return NotFound($"Project with id {id} does not exist."); }
             return Ok(_mapper.Map<ProjectReadDTO>(project));
-            //if (id <= 0)
-            //{
-            //    return BadRequest("Invalid id");
-            //}
-
-            //var project = await _db.Projects.FirstOrDefaultAsync(u => u.Id == id);
-
-            //if (project == null)
-            //{
-            //    return NotFound($"Project with id {id} does not exist.");
-            //}
-
-            //return Ok(project);
         }
 
         [HttpPost]  // how does this post method get the projectDTO from the method param?
@@ -64,19 +51,6 @@ namespace ConstructionSubmittal_API.Controllers
             {
                 return BadRequest("Project cannot be empty");
             }
-
-            //Project project = new Project
-            //{
-            //    Name = projectDTO.Name,
-            //    ProjectNumber = projectDTO.ProjectNumber,
-            //    Address = projectDTO.Address
-            //};
-
-            //Project project = _mapper.Map<Project>(projectDTO);
-
-            //await _db.AddAsync(project);
-            //await _db.SaveChangesAsync();
-
             // in n-tier, controller should handle the mapping from entity-dto.. but just never return entity model to user..
             Project project = _mapper.Map<Project>(projectDTO);
 
@@ -94,40 +68,23 @@ namespace ConstructionSubmittal_API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Project>> UpdateProject(int id, ProjectUpdateDTO projectDTO)
+        public async Task<ActionResult<ProjectReadDTO>> UpdateProject([FromRoute]int id, [FromBody]ProjectUpdateDTO projectDTO)
         {
-            if (projectDTO == null)
-            {
-                return BadRequest("Project cannot be null");
-            }
-            if (id != projectDTO.Id)
-            {
-                return BadRequest($"Id does not match project id");
-            }
+            if (projectDTO == null) { return BadRequest("Project cannot be null"); }
+            if (id != projectDTO.Id) { return BadRequest("Id does not match project id."); }
 
-            var project = await _db.Projects.FirstOrDefaultAsync(u => u.Id == id);
-            if (project == null)
-            {
-                return NotFound($"Project with id of {id} does not exist.");
-            }
-
-            _mapper.Map(projectDTO, project);   // wont create tracking issue.. map dto -> project entity
-            await _db.SaveChangesAsync();
-            return Ok(projectDTO);
+            var project = await _projectService.UpdateProjectAsync(id, _mapper.Map<Project>(projectDTO));
+            if (project == null) { return NotFound(); }
+            return Ok(_mapper.Map<ProjectReadDTO>(project));
 
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<Project>> DeleteProject(int id)
+        public async Task<IActionResult> DeleteProject([FromRoute] int id)  // IActionResult better for delete b/c we return NoContent.. ActionResult<project> implies we will return a project, which is not the case for delete..
         {
-            var project = _db.Projects.FirstOrDefault(u => u.Id == id);
-            if (project == null)
-            {
-                return NotFound($"Id of {id} does not exist.");
-            }
-
-            _db.Projects.Remove(project);
-            await _db.SaveChangesAsync();
+            if (id <= 0) { return BadRequest("Enter valid id"); }
+            var result = await _projectService.DeleteProjectAsync(id);
+            if (!result) { return NotFound($"Id of {id} does not exist."); }
             return NoContent();
         }
 
