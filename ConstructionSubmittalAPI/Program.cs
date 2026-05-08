@@ -16,8 +16,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddAutoMapper(o=>
 {
     o.CreateMap<Project, ProjectCreateDTO>().ReverseMap();
-    o.CreateMap<Project, ProjectUpdateDTO>().ReverseMap();
+    o.CreateMap<Project, ProjectUpdateDTO>().ReverseMap().ForMember(dest => dest.Id, opt => opt.Ignore());  // tells ef core 'ignore id from the source obj'.. so don't map to the destination id
     o.CreateMap<Project, ProjectReadDTO>().ReverseMap();
+    o.CreateMap<Project, Project>().ReverseMap().ForMember(dest => dest.Id, opt => opt.Ignore());   // include for mapping in service Update method..
 });
 
 // configure dbcontext

@@ -1,4 +1,5 @@
-﻿using ConstructionSubmittal_API.Data;
+﻿using AutoMapper;
+using ConstructionSubmittal_API.Data;
 using ConstructionSubmittal_API.Models;
 using ConstructionSubmittal_API.Services.IServices;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +10,11 @@ namespace ConstructionSubmittal_API.Services
     public class ProjectService : IProjectService
     {
         private readonly AppDbContext _db;
-        public ProjectService(AppDbContext db)
+        private readonly IMapper _mapper;
+        public ProjectService(AppDbContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
         public async Task<Project?> CreateProjectAsync(Project project)
@@ -43,7 +46,11 @@ namespace ConstructionSubmittal_API.Services
 
         public async Task<bool> DeleteProjectAsync(int id)
         {
-            throw new NotImplementedException();
+            var projectFromDb = await _db.Projects.FindAsync(id);
+            if (projectFromDb == null) { return false; }
+            _db.Projects.Remove(projectFromDb);
+            await _db.SaveChangesAsync();
+            return true;
         }
 
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
@@ -71,7 +78,14 @@ namespace ConstructionSubmittal_API.Services
 
         public async Task<Project?> UpdateProjectAsync(int id, Project project)
         {
-            throw new NotImplementedException();
+            var projectFromDb = await _db.Projects.FindAsync(id);
+            if (projectFromDb == null) { return null; }
+
+            
+            _mapper.Map(project, projectFromDb);  // map the project passed in to the project alrady being tracked by efcore
+            await _db.SaveChangesAsync();
+            return projectFromDb;
+            //if (projectFromDb.Id != project.Id) { return null; } already checked in controller.. don't need here again
         }
     }
 }
