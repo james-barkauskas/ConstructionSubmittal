@@ -32,7 +32,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<IProjectService, ProjectService>();  // add to dependency injection container.. 'whenver a controller asks for IProjectService, give them ProjectService..
-
+builder.Services.AddScoped<ISubmittalService, SubmittalService>();
 
 var app = builder.Build();
 
