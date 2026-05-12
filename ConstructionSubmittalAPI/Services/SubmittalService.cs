@@ -65,6 +65,8 @@ namespace ConstructionSubmittal_API.Services
 
             var titleExists = await _db.Submittals.AnyAsync(s => s.Title == submittalDto.Title 
                 && s.ProjectId == submittalFromDb.ProjectId && s.Id != id);
+            // checks if a submittal exists that has the same title as the dto, the same ProjectId as the dto, and the same id..
+            // this prevents a submittal within the same project having a duplicate name
 
             if (titleExists) { return null; }
 
