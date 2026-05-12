@@ -12,6 +12,10 @@ namespace ConstructionSubmittal_API.Models
         [Required]
         public string Address { get; set; } = string.Empty;
 
+        // adding CompanyId property to map a Project to a GC.. FK to Company..
+        public int? CompanyId { get; set; }
+        public Company? Company { get; set; }
+
         // by using [Required], this protects from outside requests.. it tells the API to reject a request if a value is not included..
         // by using string.Empty, this is internal protection.. helps prevent nullReferenceException..
         // should include these validations in both DTOs and entity models..

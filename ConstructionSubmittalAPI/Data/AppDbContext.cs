@@ -16,7 +16,7 @@ namespace ConstructionSubmittal_API.Data
     {
         public DbSet<Project> Projects { get; set; }
         public DbSet<Submittal> Submittals { get; set; }
-
+        public DbSet<Company> Companies { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); // always call the base method first..
@@ -82,6 +82,12 @@ namespace ConstructionSubmittal_API.Data
                     Type = Enums.SubmittalType.ProductData,
                     ProjectId = 2
                 }
+                );
+
+            modelBuilder.Entity<Company>().HasData(
+                new Company { Id = 1, Address = "123 Big Street", Name = "Big General Contractors", CompanyType = Enums.CompanyType.GeneralContractor },
+                new Company { Id = 2, Address = "5555 West Boulevard", Name = "Diamond Architecture", CompanyType = Enums.CompanyType.Architect },
+                new Company { Id=3, Address="101 Electric Road", Name="Spark Electrical", CompanyType=Enums.CompanyType.Subcontractor}
                 );
         }
     }
