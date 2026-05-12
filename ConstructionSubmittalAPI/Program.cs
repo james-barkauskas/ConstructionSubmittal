@@ -22,7 +22,10 @@ builder.Services.AddAutoMapper(o=>
 
     o.CreateMap<Submittal, SubmittalReadDTO>().ReverseMap();
     o.CreateMap<SubmittalCreateDTO, Submittal>();   // should avoid mapping in both directions for create and update..
-    o.CreateMap<SubmittalUpdateDTO, Submittal>();
+    o.CreateMap<SubmittalUpdateDTO, Submittal>()
+        .ForMember(dest => dest.Id, opt => opt.Ignore())
+        .ForMember(dest => dest.ProjectId, opt => opt.Ignore());    // tells mapper to ignore these fields when updating..
+    o.CreateMap<Submittal, Submittal>().ReverseMap().ForMember(dest => dest.Id, opt => opt.Ignore());
 });
 
 // configure dbcontext

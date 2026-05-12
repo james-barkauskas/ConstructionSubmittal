@@ -5,7 +5,7 @@ namespace ConstructionSubmittal_API.Models.DTOs
 {
     public class SubmittalUpdateDTO
     {
-        // public int Id { get; set; } // will be PK
+        public int Id { get; set; } // will be PK
         [Required]
         [MaxLength(100)]
         public string Title { get; set; } = string.Empty;

@@ -45,6 +45,44 @@ namespace ConstructionSubmittal_API.Data
                     Address = "101 Center Drive"
                 }
                 );
+
+            modelBuilder.Entity<Submittal>().HasData(
+                new Submittal
+                {
+                    Id = 1,
+                    Title = "Interior Lighting : Product Data",
+                    Type = Enums.SubmittalType.ProductData,
+                    ProjectId = 1
+                },
+                new Submittal
+                {
+                    Id = 2,
+                    Title = "Exterior Lighting : Product Data",
+                    Type = Enums.SubmittalType.ProductData,
+                    ProjectId = 1
+                },
+                new Submittal
+                {
+                    Id = 3,
+                    Title = "Interior Lighting : Shop Drawing",
+                    Type = Enums.SubmittalType.ShopDrawing,
+                    ProjectId = 1
+                },
+                new Submittal
+                {
+                    Id = 4,
+                    Title = "Steel Framing : Shop Drawing",
+                    Type = Enums.SubmittalType.ShopDrawing,
+                    ProjectId = 2
+                },
+                new Submittal
+                {
+                    Id = 5,
+                    Title = "Steel Framing : Product Data",
+                    Type = Enums.SubmittalType.ProductData,
+                    ProjectId = 2
+                }
+                );
         }
     }
 }

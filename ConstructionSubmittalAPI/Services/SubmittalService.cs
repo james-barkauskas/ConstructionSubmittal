@@ -2,6 +2,7 @@
 using ConstructionSubmittal_API.Data;
 using ConstructionSubmittal_API.Enums;
 using ConstructionSubmittal_API.Models;
+using ConstructionSubmittal_API.Models.DTOs;
 using ConstructionSubmittal_API.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 
@@ -55,22 +56,22 @@ namespace ConstructionSubmittal_API.Services
             return await _db.Submittals.FindAsync(id);
         }
 
-        public async Task<Submittal?> UpdateSubmittalAsync(int id, Submittal submittal)
+        public async Task<Submittal?> UpdateSubmittalAsync(int id, SubmittalUpdateDTO submittalDto)
         {
             // should user be able to update a submittal's project? 
             var submittalFromDb = await _db.Submittals.FindAsync(id);
             if (submittalFromDb == null) { return null; }   // submittal doesn't exist
+            
 
-            var titleExists = await _db.Submittals.AnyAsync(s => s.Title == submittal.Title 
-                && s.ProjectId == submittal.ProjectId && s.Id != id);
-            //var titleExists = await _db.Submittals.AnyAsync(s => s.Title == submittal.Title
-            //    && s.ProjectId == submittal.ProjectId);
+            var titleExists = await _db.Submittals.AnyAsync(s => s.Title == submittalDto.Title 
+                && s.ProjectId == submittalFromDb.ProjectId && s.Id != id);
 
             if (titleExists) { return null; }
 
-            _mapper.Map(submittal, submittalFromDb);
+            _mapper.Map(submittalDto, submittalFromDb);
             await _db.SaveChangesAsync();
             return submittalFromDb;
+            // implement protction against user entering invalid enum..
         }
     }
 }
