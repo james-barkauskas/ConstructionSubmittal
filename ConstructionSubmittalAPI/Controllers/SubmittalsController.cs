@@ -4,7 +4,6 @@ using ConstructionSubmittal_API.Models.DTOs;
 using ConstructionSubmittal_API.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography.Pkcs;
 
 namespace ConstructionSubmittal_API.Controllers
 {
@@ -23,8 +22,8 @@ namespace ConstructionSubmittal_API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("project/{projectId}/submittals")] // more descirptive route
-        public async Task<ActionResult<IEnumerable<SubmittalReadDTO>>> GetSubmittals([FromRoute] int projectId)
+        [HttpGet("project/{projectId}/submittals")] // more descriptive route
+        public async Task<ActionResult<IEnumerable<SubmittalReadDTO>>> GetSubmittalsByProject([FromRoute] int projectId)
         {
             var project = await _projectService.GetProjectByIdAsync(projectId);
             if (project == null) { return NotFound($"Project with id {projectId} does not exist."); }
@@ -35,7 +34,7 @@ namespace ConstructionSubmittal_API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<SubmittalReadDTO>> GetSubmittalById(int id)
+        public async Task<ActionResult<SubmittalReadDTO>> GetSubmittalById([FromRoute] int id)
         {
             if (id <= 0) { return BadRequest("Enter valid submittal id."); }
             var submittal = await _submittalService.GetSubmittalByIdAsync(id);
@@ -44,11 +43,11 @@ namespace ConstructionSubmittal_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SubmittalReadDTO>> CreateSubmittal([FromBody]SubmittalCreateDTO submittal)
+        public async Task<ActionResult<SubmittalReadDTO>> CreateSubmittal([FromBody]SubmittalCreateDTO submittalDto)
         {
             // consider sending back more specific error messages..
-            if (submittal == null) { return BadRequest("Submittal object should not be empty."); }
-            var submittalCreated = await _submittalService.CreateSubmittalAsync(_mapper.Map<Submittal>(submittal));
+            if (submittalDto == null) { return BadRequest("Submittal object should not be empty."); }
+            var submittalCreated = await _submittalService.CreateSubmittalAsync(_mapper.Map<Submittal>(submittalDto));
             if (submittalCreated == null) { return BadRequest("Invalid submittal object."); }
 
             var submittalToReturn = _mapper.Map<SubmittalReadDTO>(submittalCreated);
@@ -73,7 +72,7 @@ namespace ConstructionSubmittal_API.Controllers
         {
             if (id <= 0) { return BadRequest("Enter valid Id."); }
             var success = await _submittalService.DeleteSubmittalAsync(id);
-            if (success == false) { return NotFound($"Id of {id} does not exist."); }
+            if (!success) { return NotFound($"Id of {id} does not exist."); }
             return NoContent();
         }
     }

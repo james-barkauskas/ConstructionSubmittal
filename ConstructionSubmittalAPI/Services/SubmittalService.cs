@@ -24,11 +24,13 @@ namespace ConstructionSubmittal_API.Services
             // how can i return different responses other than 'null' if project doesn't exist or title already exists..
             var projectExists = await _db.Projects.AnyAsync(p => p.Id == submittal.ProjectId);
             if (!projectExists) { return null; }
-            // check if Title exists within same Project..
+
+            // check if Title exists within same Project.. if a submittal exists where it has that title and belongs to same Project.. (duplicate)
             var titleExists = await _db.Submittals.AnyAsync(s => s.Title == submittal.Title
                 && s.ProjectId == submittal.ProjectId);
             if (titleExists) { return null; }
-            submittal.Status = SubmittalStatus.Draft;
+
+            submittal.Status = SubmittalStatus.Draft;   // do i need to set this? or will it automatically set to Draft?
 
             await _db.Submittals.AddAsync(submittal);
             await _db.SaveChangesAsync();
@@ -37,7 +39,7 @@ namespace ConstructionSubmittal_API.Services
 
         public async Task<bool> DeleteSubmittalAsync(int id)
         {
-            // implement 'soft' delete..?
+            // consider implementing 'soft' delete..?
             var submittal = await _db.Submittals.FindAsync(id);
             if (submittal == null) { return false; }
             _db.Submittals.Remove(submittal);
@@ -47,7 +49,6 @@ namespace ConstructionSubmittal_API.Services
 
         public async Task<IEnumerable<Submittal>> GetAllSubimttalsByProjectAsync(int projectId)
         {
-            //bool project = await _db.Projects.AnyAsync(u => u.Id == projectId);
             return await _db.Submittals.Where(s => s.ProjectId == projectId).ToListAsync(); // include Where clause to filter by Project..
         }
 
@@ -55,19 +56,16 @@ namespace ConstructionSubmittal_API.Services
         {
             return await _db.Submittals.FindAsync(id);
         }
-
-        public async Task<Submittal?> UpdateSubmittalAsync(int id, SubmittalUpdateDTO submittalDto)
+        public async Task<Submittal?> UpdateSubmittalAsync(int id, SubmittalUpdateDTO submittalDto) // why did i choose to receive a dto here not the entity obj..?
         {
             // should user be able to update a submittal's project? 
             var submittalFromDb = await _db.Submittals.FindAsync(id);
             if (submittalFromDb == null) { return null; }   // submittal doesn't exist
             
-
             var titleExists = await _db.Submittals.AnyAsync(s => s.Title == submittalDto.Title 
-                && s.ProjectId == submittalFromDb.ProjectId && s.Id != id);
+                && s.ProjectId == submittalFromDb.ProjectId && s.Id != id); // include 's.Id!=id' to check other than this submittal we are curretnly updating..
             // checks if a submittal exists that has the same title as the dto, the same ProjectId as the dto, and the same id..
             // this prevents a submittal within the same project having a duplicate name
-
             if (titleExists) { return null; }
 
             _mapper.Map(submittalDto, submittalFromDb);

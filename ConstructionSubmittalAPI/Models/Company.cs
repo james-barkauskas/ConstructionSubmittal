@@ -14,7 +14,7 @@ namespace ConstructionSubmittal_API.Models
         [Required]
         public string Address { get; set; } = string.Empty;
         // Navigation property - links many Projects to this Company
-        //public ICollection<Project> Projects { get; set; } = new List<Project>();
+        //public ICollection<Project> Projects { get; set; } = new List<Project>(); // why use ICollection here not List like we did with Project?
 
     }
 }

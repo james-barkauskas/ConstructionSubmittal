@@ -13,13 +13,11 @@ namespace ConstructionSubmittal_API.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        // private, class-level variables that we can use throughout the controller, each method can access the '_db'..
+        // private, class-level variables that we can use throughout the controller, each method can access the '_service'..
         private readonly IProjectService _projectService;
-        private readonly AppDbContext _db;
         private readonly IMapper _mapper;
-        public ProjectsController(AppDbContext db, IMapper mapper, IProjectService projectService)  // our constructor gets 'db' injected.. so we assign our private _db to the injected db..
+        public ProjectsController(IMapper mapper, IProjectService projectService)  // our constructor gets 'service' injected..
         {
-            _db = db;
             _projectService = projectService;
             _mapper = mapper;
         }
@@ -30,10 +28,8 @@ namespace ConstructionSubmittal_API.Controllers
             var projects = await _projectService.GetAllProjectsAsync();   // retrieve the list of Projects so can map them to DTOs
             var projectsToReturn = _mapper.Map<IEnumerable<ProjectReadDTO>>(projects);
             return Ok(projectsToReturn);
-            //return Ok(await _projectService.GetAllProjectsAsync());
         }
 
-        
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProjectReadDTO>> GetProjectById([FromRoute] int id)
         {
@@ -44,17 +40,17 @@ namespace ConstructionSubmittal_API.Controllers
             return Ok(_mapper.Map<ProjectReadDTO>(project));
         }
 
-        [HttpPost]  // how does this post method get the projectDTO from the method param?
-        public async Task<ActionResult<Project>> CreateProject([FromBody] ProjectCreateDTO projectDTO)
+        [HttpPost]
+        public async Task<ActionResult<ProjectReadDTO>> CreateProject([FromBody] ProjectCreateDTO projectDTO)
         {
             if (projectDTO == null)
             {
                 return BadRequest("Project cannot be empty");
             }
-            // in n-tier, controller should handle the mapping from entity-dto.. but just never return entity model to user..
+
             Project project = _mapper.Map<Project>(projectDTO);
 
-            var createdProject = await _projectService.CreateProjectAsync(project); // should i instead be passing a DTO to the service? that way the Controller doesn't see the Db entity..
+            var createdProject = await _projectService.CreateProjectAsync(project);
             if (createdProject == null)
             {
                 return Conflict("A project with that job number already exists.");
@@ -62,9 +58,7 @@ namespace ConstructionSubmittal_API.Controllers
 
             var returnedProject = _mapper.Map<ProjectReadDTO>(createdProject);
 
-            // controller should always return a dto.. never an entity model.
             return CreatedAtAction(nameof(GetProjectById), new { id = returnedProject.Id }, returnedProject);   // best practice to return CreatedAtAction for Create method.. use OK for a get or update.. createdAtAction includes a location header..
-            // return Ok(returnedProject);
         }
 
         [HttpPut("{id:int}")]
@@ -76,7 +70,6 @@ namespace ConstructionSubmittal_API.Controllers
             var project = await _projectService.UpdateProjectAsync(id, _mapper.Map<Project>(projectDTO));
             if (project == null) { return NotFound(); }
             return Ok(_mapper.Map<ProjectReadDTO>(project));
-
         }
 
         [HttpDelete("{id:int}")]
@@ -87,6 +80,5 @@ namespace ConstructionSubmittal_API.Controllers
             if (!result) { return NotFound($"Id of {id} does not exist."); }
             return NoContent();
         }
-
     }
 }

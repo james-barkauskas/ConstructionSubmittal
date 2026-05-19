@@ -13,6 +13,7 @@ namespace ConstructionSubmittal_API.Models
         public string Address { get; set; } = string.Empty;
 
         // adding CompanyId property to map a Project to a GC.. FK to Company..
+        // should Project only be able to belong to a GC..?
         public int? CompanyId { get; set; }
         public Company? Company { get; set; }
 

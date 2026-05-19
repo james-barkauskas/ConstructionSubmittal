@@ -10,9 +10,7 @@ namespace ConstructionSubmittal_API.Models.DTOs
         [MaxLength(100)]
         public string Title { get; set; } = string.Empty;
         public string? SpecSection { get; set; }
-
-        // The enums will send back the int value of the status.. will need to find a way to provide the actual name 'draft', etc.
-        public SubmittalStatus Status { get; set; } // int and enum are Value types.. so they cannot be null and are required by default already - dont need [Requried]
+        public SubmittalStatus Status { get; set; }
         public SubmittalType Type { get; set; }
         public int ProjectId { get; set; }
     }

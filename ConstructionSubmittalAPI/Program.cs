@@ -43,6 +43,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// Registering my services
 builder.Services.AddScoped<IProjectService, ProjectService>();  // add to dependency injection container.. 'whenver a controller asks for IProjectService, give them ProjectService..
 builder.Services.AddScoped<ISubmittalService, SubmittalService>();
 
